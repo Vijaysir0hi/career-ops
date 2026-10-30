@@ -240,6 +240,13 @@ try {
   }
 
   {
+    const { calls, ctx } = stub(fullPage(999999));
+    await captureStderr(() => pracecz.fetch({ provider: 'pracecz', name: 'Acme', pracecz: { keywords: ['x'] }, max_pages: 1501 }, ctx));
+    if (calls.length === 1500) pass('pracecz.fetch() caps max_pages at MAX_PAGES_CAP');
+    else fail(`pracecz.fetch() made ${calls.length} calls above MAX_PAGES_CAP, expected 1500`);
+  }
+
+  {
     const { calls, ctx } = stub(fullPage(400), { maxPages: 1 });
     const text = await captureStderr(() => pracecz.fetch({ provider: 'pracecz', name: 'Acme', pracecz: { keywords: ['x'] } }, ctx));
     if (calls.length === 1 && text === '') pass('pracecz.fetch() honors ctx.maxPages:1 with exactly one request and no warning');
